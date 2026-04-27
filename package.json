@@ -1,0 +1,54 @@
+{
+  "name": "internetautomation",
+  "version": "1.0.0",
+  "description": "End-to-end regression suite for the-internet.herokuapp.com with built-in test observability dashboard.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:debug": "PWDEBUG=1 playwright test",
+    "test:ui": "playwright test --ui",
+    "test:smoke": "playwright test --grep @smoke",
+    "report": "playwright show-report",
+    "dashboard": "tsx dashboard/server/index.ts",
+    "dashboard:dev": "tsx watch dashboard/server/index.ts",
+    "build:static": "tsx scripts/export-dashboard.ts",
+    "preview:static": "npx -y serve dashboard-dist",
+    "lint": "eslint . --ext .ts,.tsx,.js",
+    "lint:fix": "eslint . --ext .ts,.tsx,.js --fix",
+    "format": "prettier --write \"**/*.{ts,tsx,js,json,md,html,css}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,json,md,html,css}\"",
+    "typecheck": "tsc --noEmit",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.0",
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.0",
+    "@typescript-eslint/eslint-plugin": "^8.18.0",
+    "@typescript-eslint/parser": "^8.18.0",
+    "eslint": "^9.17.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-playwright": "^2.1.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.2.11",
+    "prettier": "^3.4.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.7.0",
+    "express": "^5.0.1"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,html,css}": [
+      "prettier --write"
+    ]
+  }
+}

@@ -1,0 +1,68 @@
+name: Build & deploy dashboard
+
+# Runs the test suite on push to main (and on demand), bakes the results into a
+# fully static dashboard, and publishes it to GitHub Pages.
+#
+# Setup once:  Repo → Settings → Pages → Source = "GitHub Actions".
+# (For a private repo you need GitHub Pro/Team or use a free alternative like
+# Cloudflare Pages instead — see README.)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: # manual "Run workflow" button
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Run regression suite
+        # Don't fail the deploy when tests fail — the dashboard exists *to*
+        # surface those failures. The Triage view will show them.
+        continue-on-error: true
+        env:
+          GIT_BRANCH: ${{ github.ref_name }}
+          GIT_COMMIT: ${{ github.sha }}
+        run: npm test
+
+      - name: Build static dashboard
+        run: npm run build:static
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dashboard-dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,16 @@
+node_modules/
+dist/
+dashboard-dist/
+playwright-report/
+test-results/
+test-fixtures/downloads/
+dashboard/data/*.db
+dashboard/data/*.db-journal
+dashboard/data/*.db-wal
+dashboard/data/*.db-shm
+.env
+.env.local
+.DS_Store
+*.log
+.vscode/
+.idea/
