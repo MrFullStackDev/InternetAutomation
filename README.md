@@ -347,18 +347,6 @@ work-arounds for several real bugs in the demo site:
 
 ---
 
-## Deploying the dashboard for free
-
-The dashboard auto-detects whether it has a live backend by probing
-`GET /api/health` at boot:
-
-- **Live mode** (`npm run dashboard`): full UI, including Reset / Refresh and the
-  time-range filter, reads from `/api/*`.
-- **Static mode** (no backend): reads from `./data/*.json`, hides Reset and
-  Refresh, and replaces the time-range popover with a "Static snapshot · &lt;build
-  time&gt;" badge. Same components, same charts, same numbers — just frozen at
-  build time.
-
 ### Build the static export locally
 
 ```bash
@@ -372,9 +360,6 @@ npm run preview:static  # serves dashboard-dist on http://localhost:3000
 | Host | Setup | Notes |
 | --- | --- | --- |
 | **GitHub Pages** | Repo → Settings → Pages → Source = "GitHub Actions"; the included [`dashboard.yml`](.github/workflows/dashboard.yml) workflow handles the rest | Free for public repos; needs Pro/Team for private |
-| **Cloudflare Pages** | Connect the repo, build command `npm run build:static`, output dir `dashboard-dist` | Free private repos, generous bandwidth |
-| **Netlify** | Same as Cloudflare; `netlify deploy --dir=dashboard-dist --prod` | Free tier covers small projects |
-| **S3 / R2 / any bucket** | `aws s3 sync dashboard-dist s3://your-bucket` | Cheapest for high traffic |
 
 ### GitHub Actions workflow (included)
 
@@ -390,21 +375,6 @@ and on demand:
 After enabling Pages → "GitHub Actions" the published URL appears in the
 workflow summary. Successive runs append to the trend charts because each commit
 gets a fresh DB and run row.
-
-### What doesn't work in static mode (and why)
-
-| Feature | Live | Static | Reason |
-| --- | --- | --- | --- |
-| Reset All Stats | ✅ | hidden | needs `DELETE /api/runs` |
-| Refresh button | ✅ | hidden | data can't change between requests |
-| Time-range filter | ✅ | shows "Static snapshot" | the export is one snapshot of all data |
-| Run drill-in (per-run test list) | ✅ | ✅ | one JSON file per run is exported |
-| Sort / search / filter | ✅ | ✅ | all client-side |
-| Trace / screenshot links (Triage) | ✅ | shown as a note | artifacts aren't bundled into the export |
-
-If you need a fully interactive dashboard with persistent history (add/clear
-runs from the UI), deploy the Express server instead — Fly.io's free tier with
-a 3 GB persistent volume handles this comfortably.
 
 ---
 
