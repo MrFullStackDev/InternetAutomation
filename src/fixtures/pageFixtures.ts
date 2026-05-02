@@ -1,4 +1,4 @@
-import { test as base } from '@playwright/test';
+import { test as base, type Page } from '@playwright/test';
 import { ABTestPage } from '../pages/ABTestPage.js';
 import { AddRemoveElementsPage } from '../pages/AddRemoveElementsPage.js';
 import { BasicAuthPage } from '../pages/BasicAuthPage.js';
@@ -44,6 +44,15 @@ import { SortableDataTablesPage } from '../pages/SortableDataTablesPage.js';
 import { StatusCodesPage } from '../pages/StatusCodesPage.js';
 import { TyposPage } from '../pages/TyposPage.js';
 import { WysiwygEditorPage } from '../pages/WysiwygEditorPage.js';
+
+type PageCtor<T> = new (page: Page) => T;
+
+const make =
+  <T>(Klass: PageCtor<T>) =>
+  async (
+    { page }: { page: Page },
+    use: (value: T) => Promise<void>,
+  ): Promise<void> => use(new Klass(page));
 
 interface PageFixtures {
   abTestPage: ABTestPage;
@@ -95,52 +104,52 @@ interface PageFixtures {
 }
 
 export const test = base.extend<PageFixtures>({
-  abTestPage: async ({ page }, use) => use(new ABTestPage(page)),
-  addRemoveElementsPage: async ({ page }, use) => use(new AddRemoveElementsPage(page)),
-  basicAuthPage: async ({ page }, use) => use(new BasicAuthPage(page)),
-  brokenImagesPage: async ({ page }, use) => use(new BrokenImagesPage(page)),
-  challengingDomPage: async ({ page }, use) => use(new ChallengingDomPage(page)),
-  checkboxesPage: async ({ page }, use) => use(new CheckboxesPage(page)),
-  contextMenuPage: async ({ page }, use) => use(new ContextMenuPage(page)),
-  digestAuthPage: async ({ page }, use) => use(new DigestAuthPage(page)),
-  disappearingElementsPage: async ({ page }, use) => use(new DisappearingElementsPage(page)),
-  dragAndDropPage: async ({ page }, use) => use(new DragAndDropPage(page)),
-  dropdownPage: async ({ page }, use) => use(new DropdownPage(page)),
-  dynamicContentPage: async ({ page }, use) => use(new DynamicContentPage(page)),
-  dynamicControlsPage: async ({ page }, use) => use(new DynamicControlsPage(page)),
-  dynamicLoadingPage: async ({ page }, use) => use(new DynamicLoadingPage(page)),
-  entryAdPage: async ({ page }, use) => use(new EntryAdPage(page)),
-  exitIntentPage: async ({ page }, use) => use(new ExitIntentPage(page)),
-  fileDownloadPage: async ({ page }, use) => use(new FileDownloadPage(page)),
-  fileUploadPage: async ({ page }, use) => use(new FileUploadPage(page)),
-  floatingMenuPage: async ({ page }, use) => use(new FloatingMenuPage(page)),
-  forgotPasswordPage: async ({ page }, use) => use(new ForgotPasswordPage(page)),
-  framesPage: async ({ page }, use) => use(new FramesPage(page)),
-  iframePage: async ({ page }, use) => use(new IFramePage(page)),
-  geolocationPage: async ({ page }, use) => use(new GeolocationPage(page)),
-  homePage: async ({ page }, use) => use(new HomePage(page)),
-  horizontalSliderPage: async ({ page }, use) => use(new HorizontalSliderPage(page)),
-  hoversPage: async ({ page }, use) => use(new HoversPage(page)),
-  infiniteScrollPage: async ({ page }, use) => use(new InfiniteScrollPage(page)),
-  inputsPage: async ({ page }, use) => use(new InputsPage(page)),
-  jqueryUiMenuPage: async ({ page }, use) => use(new JqueryUiMenuPage(page)),
-  jsAlertsPage: async ({ page }, use) => use(new JsAlertsPage(page)),
-  jsErrorPage: async ({ page }, use) => use(new JsErrorPage(page)),
-  keyPressesPage: async ({ page }, use) => use(new KeyPressesPage(page)),
-  largeAndDeepDomPage: async ({ page }, use) => use(new LargeAndDeepDomPage(page)),
-  loginPage: async ({ page }, use) => use(new LoginPage(page)),
-  multipleWindowsPage: async ({ page }, use) => use(new MultipleWindowsPage(page)),
-  nestedFramesPage: async ({ page }, use) => use(new NestedFramesPage(page)),
-  notificationMessagePage: async ({ page }, use) => use(new NotificationMessagePage(page)),
-  redirectorPage: async ({ page }, use) => use(new RedirectorPage(page)),
-  secureFileDownloadPage: async ({ page }, use) => use(new SecureFileDownloadPage(page)),
-  shadowDomPage: async ({ page }, use) => use(new ShadowDomPage(page)),
-  shiftingContentPage: async ({ page }, use) => use(new ShiftingContentPage(page)),
-  slowResourcesPage: async ({ page }, use) => use(new SlowResourcesPage(page)),
-  sortableDataTablesPage: async ({ page }, use) => use(new SortableDataTablesPage(page)),
-  statusCodesPage: async ({ page }, use) => use(new StatusCodesPage(page)),
-  typosPage: async ({ page }, use) => use(new TyposPage(page)),
-  wysiwygEditorPage: async ({ page }, use) => use(new WysiwygEditorPage(page)),
+  abTestPage: make(ABTestPage),
+  addRemoveElementsPage: make(AddRemoveElementsPage),
+  basicAuthPage: make(BasicAuthPage),
+  brokenImagesPage: make(BrokenImagesPage),
+  challengingDomPage: make(ChallengingDomPage),
+  checkboxesPage: make(CheckboxesPage),
+  contextMenuPage: make(ContextMenuPage),
+  digestAuthPage: make(DigestAuthPage),
+  disappearingElementsPage: make(DisappearingElementsPage),
+  dragAndDropPage: make(DragAndDropPage),
+  dropdownPage: make(DropdownPage),
+  dynamicContentPage: make(DynamicContentPage),
+  dynamicControlsPage: make(DynamicControlsPage),
+  dynamicLoadingPage: make(DynamicLoadingPage),
+  entryAdPage: make(EntryAdPage),
+  exitIntentPage: make(ExitIntentPage),
+  fileDownloadPage: make(FileDownloadPage),
+  fileUploadPage: make(FileUploadPage),
+  floatingMenuPage: make(FloatingMenuPage),
+  forgotPasswordPage: make(ForgotPasswordPage),
+  framesPage: make(FramesPage),
+  iframePage: make(IFramePage),
+  geolocationPage: make(GeolocationPage),
+  homePage: make(HomePage),
+  horizontalSliderPage: make(HorizontalSliderPage),
+  hoversPage: make(HoversPage),
+  infiniteScrollPage: make(InfiniteScrollPage),
+  inputsPage: make(InputsPage),
+  jqueryUiMenuPage: make(JqueryUiMenuPage),
+  jsAlertsPage: make(JsAlertsPage),
+  jsErrorPage: make(JsErrorPage),
+  keyPressesPage: make(KeyPressesPage),
+  largeAndDeepDomPage: make(LargeAndDeepDomPage),
+  loginPage: make(LoginPage),
+  multipleWindowsPage: make(MultipleWindowsPage),
+  nestedFramesPage: make(NestedFramesPage),
+  notificationMessagePage: make(NotificationMessagePage),
+  redirectorPage: make(RedirectorPage),
+  secureFileDownloadPage: make(SecureFileDownloadPage),
+  shadowDomPage: make(ShadowDomPage),
+  shiftingContentPage: make(ShiftingContentPage),
+  slowResourcesPage: make(SlowResourcesPage),
+  sortableDataTablesPage: make(SortableDataTablesPage),
+  statusCodesPage: make(StatusCodesPage),
+  typosPage: make(TyposPage),
+  wysiwygEditorPage: make(WysiwygEditorPage),
 });
 
 export { expect } from '@playwright/test';

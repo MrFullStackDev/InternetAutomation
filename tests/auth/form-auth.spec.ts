@@ -2,31 +2,47 @@ import { test, expect } from '../../src/fixtures/pageFixtures.js';
 import { config } from '../../src/utils/config.js';
 
 test.describe('Form Authentication', () => {
-  test('logs in with valid credentials @smoke', async ({ loginPage, page }) => {
-    await loginPage.goto();
-    await loginPage.login(config.formAuth.username, config.formAuth.password);
-    await expect(page).toHaveURL(/\/secure$/);
-    await expect(loginPage.secureAreaHeading).toBeVisible();
-    expect(await loginPage.flashText()).toContain('You logged into a secure area!');
+  test('logs in with valid credentials @smoke @critical', async ({ loginPage, page }) => {
+    await test.step('navigate to login page', async () => {
+      await loginPage.goto();
+    });
+
+    await test.step('submit valid credentials', async () => {
+      await loginPage.login(config.formAuth.username, config.formAuth.password);
+    });
+
+    await test.step('verify redirect to secure area', async () => {
+      await expect(page).toHaveURL(/\/secure$/);
+      await expect(loginPage.secureAreaHeading).toBeVisible();
+      await expect(loginPage.flashMessage).toContainText('You logged into a secure area!');
+    });
   });
 
-  test('rejects invalid username', async ({ loginPage }) => {
+  test('rejects invalid username @regression', async ({ loginPage }) => {
     await loginPage.goto();
     await loginPage.login(config.formAuth.invalidUsername, config.formAuth.password);
-    expect(await loginPage.flashText()).toContain('Your username is invalid!');
+    await expect(loginPage.flashMessage).toContainText('Your username is invalid!');
   });
 
-  test('rejects invalid password', async ({ loginPage }) => {
+  test('rejects invalid password @regression', async ({ loginPage }) => {
     await loginPage.goto();
     await loginPage.login(config.formAuth.username, config.formAuth.invalidPassword);
-    expect(await loginPage.flashText()).toContain('Your password is invalid!');
+    await expect(loginPage.flashMessage).toContainText('Your password is invalid!');
   });
 
-  test('logs out and returns to login page', async ({ loginPage, page }) => {
-    await loginPage.goto();
-    await loginPage.login(config.formAuth.username, config.formAuth.password);
-    await loginPage.logout();
-    await expect(page).toHaveURL(/\/login$/);
-    expect(await loginPage.flashText()).toContain('You logged out of the secure area!');
+  test('logs out and returns to login page @regression', async ({ loginPage, page }) => {
+    await test.step('log in', async () => {
+      await loginPage.goto();
+      await loginPage.login(config.formAuth.username, config.formAuth.password);
+    });
+
+    await test.step('log out', async () => {
+      await loginPage.logout();
+    });
+
+    await test.step('verify back at login page', async () => {
+      await expect(page).toHaveURL(/\/login$/);
+      await expect(loginPage.flashMessage).toContainText('You logged out of the secure area!');
+    });
   });
 });

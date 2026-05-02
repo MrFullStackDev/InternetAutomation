@@ -5,22 +5,22 @@ export class LoginPage extends BasePage {
   readonly path = '/login';
 
   get usernameInput(): Locator {
-    return this.page.locator('#username');
+    return this.page.getByLabel('Username');
   }
   get passwordInput(): Locator {
-    return this.page.locator('#password');
+    return this.page.getByLabel('Password');
   }
   get submitButton(): Locator {
-    return this.page.locator('button[type="submit"]');
+    return this.page.getByRole('button', { name: /login/i });
   }
   get flashMessage(): Locator {
     return this.page.locator('#flash');
   }
   get logoutButton(): Locator {
-    return this.page.locator('a[href="/logout"]');
+    return this.page.getByRole('link', { name: /logout/i });
   }
   get secureAreaHeading(): Locator {
-    return this.page.locator('h2', { hasText: 'Secure Area' });
+    return this.page.getByRole('heading', { level: 2, name: 'Secure Area' });
   }
 
   async login(username: string, password: string): Promise<void> {
@@ -31,9 +31,5 @@ export class LoginPage extends BasePage {
 
   async logout(): Promise<void> {
     await this.logoutButton.click();
-  }
-
-  async flashText(): Promise<string> {
-    return (await this.flashMessage.innerText()).trim();
   }
 }

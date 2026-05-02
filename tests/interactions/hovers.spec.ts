@@ -5,11 +5,11 @@ test.describe('Hovers', () => {
     await hoversPage.goto();
     await hoversPage.hoverAt(0);
     await expect(hoversPage.captionAt(0)).toBeVisible();
-    expect(await hoversPage.captionTextAt(0)).toContain('user1');
+    await expect(hoversPage.captionAt(0)).toContainText('user1');
   });
 
-  test('each figure exposes a unique user', async ({ hoversPage }) => {
+  test('each figure exposes a unique user @regression', async ({ hoversPage }) => {
     await hoversPage.goto();
-    expect(await hoversPage.figures.count()).toBe(3);
+    await expect(hoversPage.figures).toHaveCount(3);
   });
 });

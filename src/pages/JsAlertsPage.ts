@@ -42,8 +42,4 @@ export class JsAlertsPage extends BasePage {
     await button.click();
     return captured;
   }
-
-  async resultText(): Promise<string> {
-    return (await this.result.innerText()).trim();
-  }
 }

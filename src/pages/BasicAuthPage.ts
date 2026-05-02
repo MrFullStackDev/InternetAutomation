@@ -7,8 +7,4 @@ export class BasicAuthPage extends BasePage {
   get successMessage(): Locator {
     return this.page.locator('div.example p');
   }
-
-  async messageText(): Promise<string> {
-    return (await this.successMessage.innerText()).trim();
-  }
 }

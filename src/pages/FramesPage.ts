@@ -33,8 +33,4 @@ export class IFramePage extends BasePage {
     await this.editorBody.click();
     await this.page.keyboard.type(text);
   }
-
-  async editorText(): Promise<string> {
-    return (await this.editorBody.innerText()).trim();
-  }
 }

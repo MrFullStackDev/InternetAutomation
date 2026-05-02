@@ -4,7 +4,7 @@ import { BasePage } from './BasePage.js';
 export class HomePage extends BasePage {
   readonly path = '/';
 
-  get heading_(): Locator {
+  get heading(): Locator {
     return this.page.locator('h1.heading');
   }
 

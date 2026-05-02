@@ -7,8 +7,4 @@ export class TyposPage extends BasePage {
   get paragraph(): Locator {
     return this.page.locator('div.example p').nth(1);
   }
-
-  async paragraphText(): Promise<string> {
-    return (await this.paragraph.innerText()).trim();
-  }
 }
