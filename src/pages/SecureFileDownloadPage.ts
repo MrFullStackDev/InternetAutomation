@@ -8,7 +8,7 @@ export class SecureFileDownloadPage extends BasePage {
     return this.page.locator('div.example a');
   }
 
-  get heading_(): Locator {
+  get heading(): Locator {
     return this.page.locator('h3');
   }
 }

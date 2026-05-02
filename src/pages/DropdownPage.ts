@@ -5,7 +5,11 @@ export class DropdownPage extends BasePage {
   readonly path = '/dropdown';
 
   get dropdown(): Locator {
-    return this.page.locator('#dropdown');
+    return this.page.getByRole('combobox');
+  }
+
+  get options(): Locator {
+    return this.dropdown.locator('option');
   }
 
   async selectByValue(value: string): Promise<void> {
@@ -14,13 +18,5 @@ export class DropdownPage extends BasePage {
 
   async selectByLabel(label: string): Promise<void> {
     await this.dropdown.selectOption({ label });
-  }
-
-  async selectedValue(): Promise<string> {
-    return this.dropdown.inputValue();
-  }
-
-  async options(): Promise<string[]> {
-    return this.dropdown.locator('option').allInnerTexts();
   }
 }

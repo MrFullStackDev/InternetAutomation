@@ -12,11 +12,6 @@ export class CheckboxesPage extends BasePage {
     return this.checkboxes.nth(index);
   }
 
-  async getStates(): Promise<boolean[]> {
-    const all = await this.checkboxes.all();
-    return Promise.all(all.map((c) => c.isChecked()));
-  }
-
   async toggle(index: number): Promise<void> {
     await this.checkboxAt(index).click();
   }

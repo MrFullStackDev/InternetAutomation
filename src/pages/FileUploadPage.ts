@@ -21,8 +21,4 @@ export class FileUploadPage extends BasePage {
     await this.fileInput.setInputFiles(filePath);
     await this.submitButton.click();
   }
-
-  async uploadedFileName(): Promise<string> {
-    return (await this.uploadedFiles.innerText()).trim();
-  }
 }

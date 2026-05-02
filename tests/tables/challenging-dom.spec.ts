@@ -1,7 +1,7 @@
 import { test, expect } from '../../src/fixtures/pageFixtures.js';
 
 test.describe('Challenging DOM', () => {
-  test('renders three buttons, a canvas, and a table', async ({ challengingDomPage }) => {
+  test('renders three buttons, a canvas, and a table @regression', async ({ challengingDomPage }) => {
     await challengingDomPage.goto();
     await expect(challengingDomPage.blueButton).toBeVisible();
     await expect(challengingDomPage.redButton).toBeVisible();
@@ -10,7 +10,7 @@ test.describe('Challenging DOM', () => {
     await expect(challengingDomPage.table).toBeVisible();
   });
 
-  test('clicking the blue button does not throw', async ({ challengingDomPage }) => {
+  test('clicking the blue button does not throw @regression', async ({ challengingDomPage }) => {
     await challengingDomPage.goto();
     await challengingDomPage.clickBlue();
   });

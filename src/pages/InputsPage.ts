@@ -16,8 +16,4 @@ export class InputsPage extends BasePage {
     await this.numberInput.focus();
     await this.page.keyboard.press(`Arrow${direction}`);
   }
-
-  async value(): Promise<string> {
-    return this.numberInput.inputValue();
-  }
 }

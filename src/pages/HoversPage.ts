@@ -19,8 +19,4 @@ export class HoversPage extends BasePage {
   async hoverAt(index: number): Promise<void> {
     await this.figureAt(index).hover();
   }
-
-  async captionTextAt(index: number): Promise<string> {
-    return (await this.captionAt(index).innerText()).trim();
-  }
 }

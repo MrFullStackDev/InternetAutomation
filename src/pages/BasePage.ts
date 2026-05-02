@@ -16,11 +16,7 @@ export abstract class BasePage {
     return this.page.title();
   }
 
-  async heading(): Promise<string | null> {
-    return this.page.locator('h1, h2, h3').first().textContent();
-  }
-
-  footer(): Locator {
+  get footer(): Locator {
     return this.page.locator('#page-footer');
   }
 

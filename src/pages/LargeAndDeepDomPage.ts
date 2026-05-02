@@ -7,15 +7,13 @@ export class LargeAndDeepDomPage extends BasePage {
   get largeTable(): Locator {
     return this.page.locator('#large-table');
   }
+  get tableRows(): Locator {
+    return this.largeTable.locator('tbody tr');
+  }
   get siblingsContainer(): Locator {
     return this.page.locator('#siblings');
   }
-
-  async tableRowCount(): Promise<number> {
-    return this.largeTable.locator('tbody tr').count();
-  }
-
-  async deepNodeText(): Promise<string> {
-    return (await this.page.locator('.sibling-50.5').innerText()).trim();
+  get deepNode(): Locator {
+    return this.page.locator('.sibling-50.5');
   }
 }

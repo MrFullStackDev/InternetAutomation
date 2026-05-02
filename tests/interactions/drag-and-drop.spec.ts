@@ -3,15 +3,17 @@ import { test, expect } from '../../src/fixtures/pageFixtures.js';
 test.describe('Drag and Drop', () => {
   test('swaps column A and B headers @smoke', async ({ dragAndDropPage }) => {
     await dragAndDropPage.goto();
-    expect(await dragAndDropPage.columnHeader('a')).toBe('A');
-    expect(await dragAndDropPage.columnHeader('b')).toBe('B');
+    await expect(dragAndDropPage.headerOf('a')).toHaveText('A');
+    await expect(dragAndDropPage.headerOf('b')).toHaveText('B');
     await dragAndDropPage.dragAToB();
-    // The browser-emulated drag may not always fire HTML5 dragstart; assert that *some*
-    // ordering still resolves to headers A/B (in either order).
+    // Browser-emulated HTML5 drag may not always fire dragstart on this page; assert
+    // that both headers still resolve to A and B (order may or may not have swapped).
     const headers = [
-      await dragAndDropPage.columnHeader('a'),
-      await dragAndDropPage.columnHeader('b'),
-    ].sort();
+      await dragAndDropPage.headerOf('a').textContent(),
+      await dragAndDropPage.headerOf('b').textContent(),
+    ]
+      .map((s) => s?.trim())
+      .sort();
     expect(headers).toEqual(['A', 'B']);
   });
 });

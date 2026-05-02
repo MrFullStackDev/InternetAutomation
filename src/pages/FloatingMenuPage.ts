@@ -14,8 +14,4 @@ export class FloatingMenuPage extends BasePage {
   async scrollToBottom(): Promise<void> {
     await this.page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
   }
-
-  async menuIsVisible(): Promise<boolean> {
-    return this.menu.isVisible();
-  }
 }

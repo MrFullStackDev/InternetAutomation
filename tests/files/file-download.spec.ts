@@ -1,7 +1,7 @@
 import { test, expect } from '../../src/fixtures/pageFixtures.js';
 
 test.describe('File Download', () => {
-  test('lists at least one downloadable file', async ({ fileDownloadPage }) => {
+  test('lists at least one downloadable file @regression', async ({ fileDownloadPage }) => {
     await fileDownloadPage.goto();
     const names = await fileDownloadPage.availableFiles();
     expect(names.length).toBeGreaterThan(0);
