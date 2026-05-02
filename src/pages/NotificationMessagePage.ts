@@ -5,14 +5,13 @@ export class NotificationMessagePage extends BasePage {
   readonly path = '/notification_message_rendered';
 
   get clickHereLink(): Locator {
-    return this.page.locator('a', { hasText: 'Click here' });
+    return this.page.getByRole('link', { name: /click here/i });
   }
   get flash(): Locator {
     return this.page.locator('#flash');
   }
 
-  async clickAndGetMessage(): Promise<string> {
+  async triggerNotification(): Promise<void> {
     await this.clickHereLink.click();
-    return (await this.flash.innerText()).trim();
   }
 }

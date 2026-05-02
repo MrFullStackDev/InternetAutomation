@@ -6,13 +6,13 @@ test.describe('File Upload', () => {
   test('uploads a fixture file @smoke', async ({ fileUploadPage }) => {
     await fileUploadPage.goto();
     await fileUploadPage.upload(fixturePath('sample-upload.txt'));
-    expect(await fileUploadPage.uploadedFileName()).toContain('sample-upload.txt');
+    await expect(fileUploadPage.uploadedFiles).toContainText('sample-upload.txt');
   });
 
-  test('uploads via setInputFiles even with relative-style path', async ({ fileUploadPage }) => {
+  test('uploads via setInputFiles even with relative-style path @regression', async ({ fileUploadPage }) => {
     await fileUploadPage.goto();
     const abs = path.resolve(fixturePath('sample-upload.txt'));
     await fileUploadPage.upload(abs);
-    expect(await fileUploadPage.uploadedFileName()).toContain('sample-upload.txt');
+    await expect(fileUploadPage.uploadedFiles).toContainText('sample-upload.txt');
   });
 });

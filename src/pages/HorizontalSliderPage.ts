@@ -20,8 +20,4 @@ export class HorizontalSliderPage extends BasePage {
       await this.page.keyboard.press(key);
     }
   }
-
-  async displayedValue(): Promise<string> {
-    return (await this.valueDisplay.innerText()).trim();
-  }
 }

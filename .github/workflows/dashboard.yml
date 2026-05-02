@@ -1,16 +1,16 @@
 name: Build & deploy dashboard
 
-# Runs the test suite on push to main (and on demand), bakes the results into a
-# fully static dashboard, and publishes it to GitHub Pages.
+# On pull_request: chromium-only sharded, fails the build on test failure.
+# On push to main / dispatch: chromium sharded + cross-browser smoke, then deploys dashboard.
 #
 # Setup once:  Repo → Settings → Pages → Source = "GitHub Actions".
-# (For a private repo you need GitHub Pro/Team or use a free alternative like
-# Cloudflare Pages instead — see README.)
 
 on:
   push:
     branches: [main]
-  workflow_dispatch: # manual "Run workflow" button
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -18,47 +18,123 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
-  cancel-in-progress: false
+  group: pages-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  build:
+  test-chromium:
+    name: chromium (shard ${{ matrix.shard }}/4)
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set up Node
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Install Playwright browser
-        run: npx playwright install --with-deps chromium
-
-      - name: Run regression suite
-        # Don't fail the deploy when tests fail — the dashboard exists *to*
-        # surface those failures. The Triage view will show them.
-        continue-on-error: true
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Run tests
         env:
           GIT_BRANCH: ${{ github.ref_name }}
           GIT_COMMIT: ${{ github.sha }}
-        run: npm test
+          DASHBOARD_DB_PATH: dashboard/data/results-chromium-${{ matrix.shard }}.db
+        run: npx playwright test --project=chromium --shard=${{ matrix.shard }}/4
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-chromium-${{ matrix.shard }}
+          path: playwright-report/
+          retention-days: 7
+      - name: Upload test results (traces, videos)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-chromium-${{ matrix.shard }}
+          path: test-results/
+          retention-days: 7
+      - name: Upload dashboard data
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dashboard-data-chromium-${{ matrix.shard }}
+          path: dashboard/data/
+          retention-days: 1
 
+  test-cross-browser:
+    name: ${{ matrix.project }} smoke
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        project: [firefox, webkit, mobile-chrome]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - run: npm ci
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps ${{ matrix.project == 'mobile-chrome' && 'chromium' || matrix.project }}
+      - name: Run smoke tests
+        env:
+          GIT_BRANCH: ${{ github.ref_name }}
+          GIT_COMMIT: ${{ github.sha }}
+          DASHBOARD_DB_PATH: dashboard/data/results-${{ matrix.project }}.db
+        run: npx playwright test --project=${{ matrix.project }} --grep @smoke
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ matrix.project }}
+          path: playwright-report/
+          retention-days: 7
+      - name: Upload dashboard data
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dashboard-data-${{ matrix.project }}
+          path: dashboard/data/
+          retention-days: 1
+
+  build:
+    name: Build dashboard
+    needs: [test-chromium, test-cross-browser]
+    if: github.event_name != 'pull_request' && always() && !contains(needs.*.result, 'cancelled')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - run: npm ci
+      - name: Download dashboard data
+        uses: actions/download-artifact@v4
+        with:
+          pattern: dashboard-data-*
+          path: dashboard/data-shards/
+      - name: Merge shard databases
+        run: npx tsx scripts/merge-dashboard-shards.ts
       - name: Build static dashboard
         run: npm run build:static
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v3
         with:
           path: dashboard-dist
 
   deploy:
+    name: Deploy to Pages
     needs: build
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     environment:
       name: github-pages

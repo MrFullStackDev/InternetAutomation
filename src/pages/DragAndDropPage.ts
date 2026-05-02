@@ -11,9 +11,8 @@ export class DragAndDropPage extends BasePage {
     return this.page.locator('#column-b');
   }
 
-  async columnHeader(column: 'a' | 'b'): Promise<string> {
-    const target = column === 'a' ? this.columnA : this.columnB;
-    return ((await target.locator('header').textContent()) ?? '').trim();
+  headerOf(column: 'a' | 'b'): Locator {
+    return (column === 'a' ? this.columnA : this.columnB).locator('header');
   }
 
   async dragAToB(): Promise<void> {

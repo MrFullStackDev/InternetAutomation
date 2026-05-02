@@ -12,7 +12,7 @@ test.describe('Sortable Data Tables', () => {
 
   // The page intentionally demonstrates a non-sortable table ("Example 1: No Class or ID
   // attributes"). Clicking the header should not change row order or break the page.
-  test('clicking the Last Name header does not reorder the (non-sortable) table', async ({
+  test('clicking the Last Name header does not reorder the (non-sortable) table @regression', async ({
     sortableDataTablesPage,
   }) => {
     await sortableDataTablesPage.goto();
@@ -22,7 +22,7 @@ test.describe('Sortable Data Tables', () => {
     expect(after).toEqual(before);
   });
 
-  test('table2 has the same four customers', async ({ sortableDataTablesPage }) => {
+  test('table2 has the same four customers @regression', async ({ sortableDataTablesPage }) => {
     await sortableDataTablesPage.goto();
     const lastNames = await sortableDataTablesPage.columnValues('table2', 0);
     expect(lastNames).toEqual(expect.arrayContaining(['Smith', 'Bach', 'Doe', 'Conway']));

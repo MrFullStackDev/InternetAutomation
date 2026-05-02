@@ -12,7 +12,7 @@ test.describe('Dynamic Controls', () => {
     await expect(dynamicControlsPage.checkbox).toBeVisible();
   });
 
-  test('enables and disables the text input', async ({ dynamicControlsPage }) => {
+  test('enables and disables the text input @regression', async ({ dynamicControlsPage }) => {
     await dynamicControlsPage.goto();
     await expect(dynamicControlsPage.textInput).toBeDisabled();
     await dynamicControlsPage.toggleTextInput();

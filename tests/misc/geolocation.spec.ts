@@ -6,7 +6,7 @@ test.describe('Geolocation', () => {
     permissions: ['geolocation'],
   });
 
-  test('reports the mocked latitude and longitude', async ({ geolocationPage }) => {
+  test('reports the mocked latitude and longitude @regression', async ({ geolocationPage }) => {
     await geolocationPage.goto();
     await geolocationPage.detect();
     await expect(geolocationPage.latitude).toContainText('47.6062');

@@ -12,11 +12,9 @@ export class KeyPressesPage extends BasePage {
   }
 
   async pressKey(key: string): Promise<void> {
-    await this.target.click();
+    // The input is wrapped in a <form>, so focusing it would submit on Enter.
+    // The page's keydown listener is on document — body focus is enough.
+    await this.page.locator('body').click();
     await this.page.keyboard.press(key);
-  }
-
-  async lastKeyText(): Promise<string> {
-    return (await this.result.innerText()).trim();
   }
 }

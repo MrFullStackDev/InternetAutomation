@@ -26,8 +26,4 @@ export class WysiwygEditorPage extends BasePage {
     await this.editorBody.click();
     await this.page.keyboard.type(text);
   }
-
-  async text(): Promise<string> {
-    return (await this.editorBody.innerText()).trim();
-  }
 }

@@ -20,8 +20,4 @@ export class AddRemoveElementsPage extends BasePage {
   async deleteElementAt(index: number): Promise<void> {
     await this.deleteButtons.nth(index).click();
   }
-
-  async deleteElementCount(): Promise<number> {
-    return this.deleteButtons.count();
-  }
 }

@@ -1,18 +1,18 @@
 import { test, expect } from '../../src/fixtures/pageFixtures.js';
 
 test.describe('Inputs', () => {
-  test('accepts numeric input', async ({ inputsPage }) => {
+  test('accepts numeric input @smoke', async ({ inputsPage }) => {
     await inputsPage.goto();
     await inputsPage.typeNumber('42');
-    expect(await inputsPage.value()).toBe('42');
+    await expect(inputsPage.numberInput).toHaveValue('42');
   });
 
-  test('arrow keys increment and decrement', async ({ inputsPage }) => {
+  test('arrow keys increment and decrement @regression', async ({ inputsPage }) => {
     await inputsPage.goto();
     await inputsPage.typeNumber('5');
     await inputsPage.pressArrow('Up');
-    expect(await inputsPage.value()).toBe('6');
+    await expect(inputsPage.numberInput).toHaveValue('6');
     await inputsPage.pressArrow('Down');
-    expect(await inputsPage.value()).toBe('5');
+    await expect(inputsPage.numberInput).toHaveValue('5');
   });
 });
