@@ -1,6 +1,7 @@
 node_modules/
 dist/
 dashboard-dist/
+dashboard/data-shards/
 playwright-report/
 test-results/
 test-fixtures/downloads/
@@ -8,6 +9,7 @@ dashboard/data/*.db
 dashboard/data/*.db-journal
 dashboard/data/*.db-wal
 dashboard/data/*.db-shm
+.auth/
 .env
 .env.local
 .DS_Store
